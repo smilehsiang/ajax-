@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Travel";
+}
+
+<h1>Travel</h1>
+
+
+<div id="travelCardContainer">
+</div>
+
+
+
+@section Styles{
+
+
+}
+
+@section Scripts{
+    <script src="~/datas/travel.js"></script>
+    <script>
+        //確定有抓到資料
+        //console.log(spots)
+
+        //生成的卡片要塞在這邊(div裡面)
+        const travelCardsContainer = document.getElementById("travelCardContainer");
+
+        //把卡片分成三個一組
+        const cardGroups = [];
+        for (let i = 0; i < spots.CommonFormat.Section.length; i += 3) {
+            const group = spots.CommonFormat.Section.slice(i, i + 3);
+            cardGroups.push(group);
+        }
+
+
+        const datas = cardGroups.map(group => {
+            return `
+                        <div class="card-group">
+                            ${group.map(Section => {
+                //從中取出 stitle、xbody 和 file資料
+                const { stitle, xbody, file } = Section;
+                //如果file.img 不是空的，就取得第一張圖片的 URL，沒有寫這個條件若有空值會有錯誤
+                const firstImage = (file.img && file.img.length > 0) ? file.img[0].text : "";
+
+                return `
+                    <div class="card">
+                      <img class="card-img-top" src="${firstImage}" alt="${stitle} Image">
+                      <div class="card-body">
+                      <h5 class="card-title">${stitle}</h5>
+                      <p class="card-text">${xbody}</p>
+                      <a href="#" class="btn btn-primary">GO WHERE</a>
+                    </div>
+                    </div>
+                                `;
+            }).join("")}
+                        </div>
+                    `;
+        });
+
+        travelCardsContainer.innerHTML = datas.join("");
+    </script>
+
+}
+

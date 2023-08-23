@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "jQuery";
+}
+
+<h1>jQuery</h1>
+<button id="buttonGet" class="btn btn-primary">get</button>
+<button id="buttonPost" class="btn btn-secondary">post</button>
+<button id="buttonJson" class="btn btn-success">getJson</button>
+<button id="buttonLoad" class="btn btn-info">load</button>
+<button id="buttonAjax" class="btn btn-warning">ajax</button>
+<button id="buttonCors" class="btn btn-danger">cors</button>
+<div class="alert alert-dark mt-3 w-50" role="alert" id="divAlert">
+    <ul></ul>
+</div>
+@section Scripts{
+    <script>
+        //jQuery.get(url[, data][, success][, dataType])
+        //jQuery.post( url [, data ] [, success ] [, dataType ] )
+        //jQuery.getJSON(url[, data][, success])
+        $('#buttonGet').click(function () {
+            $.get('@Url.Content("~/api/getdemo")', { "name": "Tom", "age": 30 }, function (data) {
+                //data 就會收到伺服器端回傳的結果
+                $('#divAlert').text(data)
+            })
+
+        })
+        $('#buttonPost').click(function () {
+            $.post('@Url.Content("~/api/getdemo")', { "name": "Mary", "age": 28 }, function (data) {
+                //data 就會收到伺服器端回傳的結果
+                $('#divAlert').text(data)
+            })
+        })
+
+        $('#buttonJson').click(function () {
+            $.getJSON('@Url.Content("~/api/Cities")', function (datas) {
+                //data 就會收到伺服器端回傳的結果
+                //  $('#divAlert').text(data)
+                const theUl = $('#divAlert>ul');
+                const docFrag = $(document.createDocumentFragment()) //建立一個空元素(容器)
+                $.each(datas, function (idx, city) {
+                    console.log(city) //確定有抓到city的資料
+                    const item = $('<li></li>').text(city)
+                    docFrag.append(item)
+                })
+                theUl.html(docFrag)
+            })
+        })
+
+        $('#buttonLoad').click(function () {
+            // $('#divAlert').text("LOAD")
+            $('#divAlert').load('@Url.Content("~/home/Partial2")')
+        })
+
+        $('#buttonAjax').click(function () {
+            $.ajax({
+                'url': '@Url.Content("~/api/Cities")',  //'@Url.Content("~/api/getdemo")',
+                'type': 'get',  //post
+                //'data': { "name": "Fiona", "age": 32},
+                'dataType': 'json'
+                //'contentType':'json'
+                //'success':function(data){
+                //$('#divAlert').text(data)
+                //}
+            })
+                .done(function (data) {
+                    const theUl = $('#divAlert>ul');
+                    const docFrag = $(document.createDocumentFragment()) //建立一個空元素(容器)
+                    $.each(data, function (idx, city) {
+                        const item = $('<li></li>').text(city)
+                        docFrag.append(item)
+                        console.log(city)
+                    })
+                    theUl.html(docFrag)
+                    //  $('#divAlert').text(data)
+                })
+
+        })
+
+
+        $('#buttonCors').click(function () {
+            $.getJSON('https://localhost:7279/api/Shippers', function (datas) {
+                console.log(datas)
+            })
+        })
+
+
+    </script>
+}
